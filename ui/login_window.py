@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-                             QLineEdit, QPushButton, QFrame, QMessageBox, QApplication)
+                             QLineEdit, QPushButton, QFrame, QMessageBox, QApplication, QDesktopWidget)
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon, QFontDatabase
 from ui.main_window import MainWindow
@@ -10,9 +10,25 @@ class LoginWindow(QWidget):
         self.main_window = None
         self.init_ui()
         
+    def center_window(self):
+        """Center the window on the screen"""
+        desktop = QDesktopWidget()
+        screen_geometry = desktop.availableGeometry()
+        window_geometry = self.frameGeometry()
+        
+        # Calculate center position
+        center_point = screen_geometry.center()
+        window_geometry.moveCenter(center_point)
+        
+        # Move window to center
+        self.move(window_geometry.topLeft())
+        
     def init_ui(self):
         self.setWindowTitle('Hệ thống điểm danh')
-        self.setFixedSize(1000, 650)
+        self.setFixedSize(1600, 900)
+        
+        # Center the window on screen
+        self.center_window()
         
         # Main horizontal layout
         main_layout = QHBoxLayout()
@@ -40,15 +56,15 @@ class LoginWindow(QWidget):
                 padding: 20px;
             }
         """)
-        logo_container.setFixedSize(340, 240)
+        logo_container.setFixedSize(340, 280)
         
         logo_layout = QVBoxLayout()
-        logo_layout.setContentsMargins(25, 30, 25, 30)
-        logo_layout.setSpacing(5)
+        logo_layout.setContentsMargins(25, 40, 25, 40)
+        logo_layout.setSpacing(10)
         
-        logo_title = QLabel('<b>Phần mềm<br>Quản lý<br>Học tập</b>')
-        logo_title.setFont(QFont('Times New Roman', 26))
-        logo_title.setStyleSheet('color: #2c3e50; line-height: 1.3;')
+        logo_title = QLabel('<b>Phần<br>mềm</b>')
+        logo_title.setFont(QFont('Times New Roman', 24, QFont.Bold))
+        logo_title.setStyleSheet('color: #2c3e50; line-height: 1.2;')
         logo_title.setAlignment(Qt.AlignCenter)
         logo_title.setWordWrap(True)
         
@@ -74,7 +90,9 @@ class LoginWindow(QWidget):
         # Sign In title
         title_label = QLabel('<b>Đăng Nhập</b>')
         title_label.setFont(QFont('Times New Roman', 34))
-        title_label.setStyleSheet('color: #2c3e50; margin-bottom: 30px;')
+        title_label.setMinimumHeight(60)
+        title_label.setStyleSheet('color: #2c3e50; margin-bottom: 30px; padding: 10px 0;')
+        title_label.setAlignment(Qt.AlignLeft)
         
         # Email field
         email_label = QLabel('<b>Tên đăng nhập</b>')
@@ -84,7 +102,7 @@ class LoginWindow(QWidget):
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText('Nhập tên đăng nhập')
         self.username_input.setFont(QFont('Times New Roman', 12))
-        self.username_input.setFixedHeight(45)
+        self.username_input.setFixedHeight(60)
         self.username_input.setStyleSheet("""
             QLineEdit {
                 padding: 12px 15px;
@@ -108,7 +126,7 @@ class LoginWindow(QWidget):
         self.password_input.setPlaceholderText('Nhập mật khẩu')
         self.password_input.setEchoMode(QLineEdit.Password)
         self.password_input.setFont(QFont('Times New Roman', 12))
-        self.password_input.setFixedHeight(45)
+        self.password_input.setFixedHeight(60)
         self.password_input.setStyleSheet("""
             QLineEdit {
                 padding: 12px 15px;
@@ -149,7 +167,7 @@ class LoginWindow(QWidget):
         # Sign In button
         login_btn = QPushButton('Đăng nhập')
         login_btn.setFont(QFont('Times New Roman', 10))
-        login_btn.setFixedHeight(49)
+        login_btn.setFixedHeight(60)
         login_btn.setCursor(Qt.PointingHandCursor)
         login_btn.setStyleSheet("""
             QPushButton {
