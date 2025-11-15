@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QFrame, QMessageBox, QApplication, QDesktopWidget)
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon, QFontDatabase
-from ui.main_window import MainWindow
 
 class LoginWindow(QWidget):
     def __init__(self):
@@ -266,6 +265,24 @@ class LoginWindow(QWidget):
             self.password_input.clear()
             
     def open_main_window(self, full_name, role):
-        self.main_window = MainWindow(full_name, role)
-        self.main_window.show()
-        self.close()
+        """Open the appropriate main window based on user role"""
+        try:
+            if role == 'Super Admin':
+                from ui.admin.w_admin_main import WAdminMain
+                self.main_window = WAdminMain(full_name, role)
+            elif role == 'Teacher':
+                from ui.teacher.w_giangvien_main import WGiangVienMain
+                self.main_window = WGiangVienMain(full_name, role)
+            elif role == 'Student':
+                from ui.student.w_sinhvien_main import WSinhVienMain
+                self.main_window = WSinhVienMain(full_name, role)
+            else:
+                # Fallback for unknown roles
+                QMessageBox.warning(self, 'Lỗi', f'Vai trò "{role}" chưa được hỗ trợ!')
+                return
+                
+            self.main_window.show()
+            self.close()
+        except ImportError as e:
+            QMessageBox.critical(self, 'Lỗi hệ thống', f'Không thể tải giao diện: {str(e)}')
+            print(f"Import error: {e}")
