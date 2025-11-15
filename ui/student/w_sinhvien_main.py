@@ -17,8 +17,9 @@ class WSinhVienMain(BaseMainWindow):
         """Thiết lập giao diện Sinh viên"""
         self.setWindowTitle('Hệ thống điểm danh - Sinh viên')
         
-        # Create warning banner
-        self.create_warning_banner()
+        # Initialize attendance data first
+        self.attendance_rate = 85.5  # Mock: 85.5%
+        self.absent_rate = 14.5  # 100 - attendance_rate
         
         # Create content pages
         self.create_content_pages()
@@ -26,61 +27,62 @@ class WSinhVienMain(BaseMainWindow):
         # Create navigation
         self.create_navigation()
         
+        # Create warning banner in sidebar (after navigation)
+        self.create_warning_banner()
+        
         # Show default page
         self.show_diemdanh_tab()
         
     def create_warning_banner(self):
-        """Tạo thanh cảnh báo chuyên cần"""
-        # Calculate attendance rate (mock data)
-        self.attendance_rate = 85.5  # Mock: 85.5%
-        self.absent_rate = 14.5  # 100 - attendance_rate
+        """Tạo thanh cảnh báo chuyên cần trong sidebar"""
+        # Use already initialized attendance data
         
         # Determine warning level
         if self.absent_rate >= 20:
             warning_color = "#e74c3c"  # Red
-            warning_text = "🚨 CẢNH BÁO ĐỎ: Tỷ lệ vắng mặt quá cao!"
-            warning_detail = f"Bạn đã vắng {self.absent_rate:.1f}% (≥20%). Có nguy cơ bị cấm thi!"
+            warning_text = "🚨 CẢNH BÁO ĐỎ"
+            warning_detail = f"Vắng {self.absent_rate:.1f}% (≥20%)"
         elif self.absent_rate >= 10:
             warning_color = "#f39c12"  # Yellow/Orange
-            warning_text = "⚠️ CẢNH BÁO VÀNG: Chú ý chuyên cần"
-            warning_detail = f"Bạn đã vắng {self.absent_rate:.1f}% (10-20%). Cần cải thiện việc tham gia lớp."
+            warning_text = "⚠️ CẢNH BÁO VÀNG"
+            warning_detail = f"Vắng {self.absent_rate:.1f}% (10-20%)"
         else:
             warning_color = "#27ae60"  # Green
             warning_text = "✅ CHUYÊN CẦN TỐT"
-            warning_detail = f"Bạn đã vắng {self.absent_rate:.1f}% (<10%). Hãy duy trì!"
+            warning_detail = f"Vắng {self.absent_rate:.1f}% (<10%)"
             
-        # Insert warning banner at the top
-        banner = QFrame()
-        banner.setFixedHeight(60)
-        banner.setStyleSheet(f"""
+        # Create warning widget in sidebar
+        warning_widget = QFrame()
+        warning_widget.setFixedHeight(60)
+        warning_widget.setStyleSheet(f"""
             QFrame {{
                 background-color: {warning_color};
                 border: none;
-                margin: 0;
+                margin: 10px;
+                border-radius: 8px;
             }}
         """)
         
-        banner_layout = QHBoxLayout()
-        banner_layout.setContentsMargins(20, 10, 20, 10)
+        warning_layout = QVBoxLayout()
+        warning_layout.setContentsMargins(10, 8, 10, 8)
+        warning_layout.setSpacing(2)
         
         warning_label = QLabel(warning_text)
-        warning_label.setFont(QFont('Arial', 14, QFont.Bold))
+        warning_label.setFont(QFont('Arial', 9, QFont.Bold))
         warning_label.setStyleSheet("color: white;")
+        warning_label.setAlignment(Qt.AlignCenter)
         
         detail_label = QLabel(warning_detail)
-        detail_label.setFont(QFont('Arial', 11))
+        detail_label.setFont(QFont('Arial', 8))
         detail_label.setStyleSheet("color: white;")
+        detail_label.setAlignment(Qt.AlignCenter)
         
-        banner_layout.addWidget(warning_label)
-        banner_layout.addWidget(detail_label)
-        banner_layout.addStretch()
+        warning_layout.addWidget(warning_label)
+        warning_layout.addWidget(detail_label)
+        warning_widget.setLayout(warning_layout)
         
-        banner.setLayout(banner_layout)
-        
-        # Add banner to the top of main widget
-        main_widget = self.centralWidget()
-        main_layout = main_widget.layout()
-        main_layout.insertWidget(0, banner)
+        # Add warning to navigation layout
+        self.nav_layout.addWidget(warning_widget)
         
     def create_content_pages(self):
         """Tạo các trang nội dung"""
